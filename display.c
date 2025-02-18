@@ -14,7 +14,7 @@ void printHat(const chtype left, const chtype right){
 
 void printLine(gamestate* game, int line, enum lineLabel surface){
     for (int col = 1; col<COLUMN_SIZE; col ++){
-        if (line*COLUMN_SIZE + col == game->chicken){
+        if (line*COLUMN_SIZE + col == game->chicken % GRID_SIZE){
             attron(A_BLINK);
             printw("@");
             attroff(A_BLINK);
@@ -37,7 +37,7 @@ void printGame(gamestate* game){
     printHat(ACS_ULCORNER, ACS_URCORNER);
 
     int iter = LINE_SIZE-1; // print all the lines
-    for (int line = (game->death + LINE_SIZE - 1) % LINE_SIZE; iter > 0; line--, iter--){
+    for (int line = ((game->death % GRID_SIZE) + LINE_SIZE - 1) % LINE_SIZE; iter > 0; line--, iter--){
         if(line < 0){
             line = LINE_SIZE-1;
         }
@@ -47,5 +47,5 @@ void printGame(gamestate* game){
         printw("\n");
     }
     printHat(ACS_LLCORNER, ACS_LRCORNER);
-    printw("here %d %d dth: %d\n", game->chicken / COLUMN_SIZE, game->chicken % COLUMN_SIZE, game->death);
+    if(game->chicken!=AU_COIN) printw("score: %d\nPress 'q' to quit.", game->death);
 }

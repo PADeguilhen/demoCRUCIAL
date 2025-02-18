@@ -40,7 +40,6 @@ gamestate* initGame(void){
     }
     res->death = FIRST_GEN;
     res->chicken = STARTING_CHICKEN;
-
     return res;
 }
 
@@ -51,7 +50,8 @@ void deleteGame(gamestate* game){
 
 //only trees are implemented...
 void manage_collisions(gamestate* game, int newPos){
-    if (game->grid[(newPos/COLUMN_SIZE)*COLUMN_SIZE] == SOLID_GROUND && game->grid[newPos] == 1){
+    int pos = newPos % GRID_SIZE;
+    if (game->grid[(pos/COLUMN_SIZE)*COLUMN_SIZE] == SOLID_GROUND && game->grid[pos] == 1){
         return ;
     }
     game->chicken = newPos;
@@ -59,18 +59,14 @@ void manage_collisions(gamestate* game, int newPos){
 
 void updateChicken(gamestate* game, enum direction dir){
     if(game->chicken == AU_COIN) return ;
-
+    int pos = game->chicken % GRID_SIZE;
     int new;
     switch (dir) {
         case UP:
-            new = (game->chicken + COLUMN_SIZE) % GRID_SIZE;
+            new = (game->chicken + COLUMN_SIZE);
             break;
         case DOWN:
-            if ((game->chicken - COLUMN_SIZE) % GRID_SIZE < 0){
-                new = GRID_SIZE - COLUMN_SIZE + (game->chicken % COLUMN_SIZE);
-            } else {
-                new = (game->chicken - COLUMN_SIZE) % GRID_SIZE;
-            }
+            new = (game->chicken - COLUMN_SIZE);
             break;
         case LEFT:
             new = game->chicken - 1;
@@ -82,19 +78,14 @@ void updateChicken(gamestate* game, enum direction dir){
 
     manage_collisions(game, new);
 
-    // if we are out of bounds we go to the lost corner.
-    if (game->chicken % COLUMN_SIZE == 0 ||
-        (game->death == game->chicken/COLUMN_SIZE)){
+    // if we are out of bounds or we go to the corner.
+    if (pos % COLUMN_SIZE == 0 || (game->death == pos/COLUMN_SIZE)){
         game->chicken = AU_COIN;
         return ;
     }
-    if(dir == UP){
-        if (game->chicken/COLUMN_SIZE >= D_CHK_DTH){
-            game->death = (game->chicken/COLUMN_SIZE - D_CHK_DTH);
-        }
-        else if (game->chicken/COLUMN_SIZE < D_CHK_DTH){
-            game->death = LINE_SIZE - D_CHK_DTH + game->chicken/COLUMN_SIZE;
-        }
-        gen_line(game, SOLID_GROUND, game->death*COLUMN_SIZE);
+
+    if(dir == UP && (game->chicken/COLUMN_SIZE - game->death > D_CHK_DTH) && pos < new){
+        game->death++;
+        gen_line(game, SOLID_GROUND, (game->death*COLUMN_SIZE) % GRID_SIZE);
     }
 }

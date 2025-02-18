@@ -21,9 +21,10 @@ int main(){
 
     printGame(game);
 
+    int oldPos;
     char c;
     while( (c = getch()) != 'q') { // change logic for frame generation
-        printw("%d\n", game->death);
+        oldPos = game->chicken;
         switch (c) {
         case 3:
             updateChicken(game, UP);
