@@ -5,7 +5,11 @@
 #include "crossy.h"
 #include "display.h"
 
-int main(){
+int main(int argc, char* argv[]){
+    bool debug = false;
+
+    if (argc > 1 && strcmp(argv[1], "debug") == 0) debug = true;
+
     srand(time(NULL));
     initscr();
     cbreak();
@@ -15,19 +19,12 @@ int main(){
     start_color();
     use_default_colors();
 
-    init_pair(SOLID_GROUND, COLOR_GREEN, COLOR_BLACK);
-
-    init_pair(RIVER_DOWN, COLOR_BLUE, COLOR_BLACK);
-    init_pair(RIVER_UP, COLOR_BLUE, COLOR_BLACK);
-
-    //init_pair(666, COLOR_WHITE, COLOR_BLACK);
+    initColors();
 
     gamestate* game = initGame();
 
-    printGame(game);
+    printGame(game, debug);
     
-    time_t t1 = time(NULL);
-    time_t t2;
     int frame_cpt = 0;
     int oldPos;
     char c;
@@ -53,13 +50,12 @@ int main(){
         frame_cpt ++;
         if(game->chicken == AU_COIN){ // end of game the chicken is au coin
             do{
-                printGame(game);
+                printGame(game, debug);
                 printw("you have lost. GG!\nPress 'q' to quit.\n");
             } while ((c = getch()) != 'q');
             break;
         }
-        printGame(game);
-        t1 = t2;
+        printGame(game, debug);
     }
 
     endwin();

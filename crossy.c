@@ -1,9 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ncurses.h>
-
 #include "crossy.h"
+#include "display.h"
 
 int random_in_range(int a, int b){
     return a + rand() % (b-a);
@@ -28,7 +24,7 @@ void gen_line(gamestate* game, int index){
         break;
     }
     default:
-        game->grid[index] = SOLID_GROUND;
+        game -> grid[index] = SOLID_GROUND;
         game -> grid[index + 1] = 1; // trees...
         game -> grid[index + 2] = 1;
         game -> grid[index + COLUMN_SIZE - 1] = 1;
@@ -48,7 +44,6 @@ void gen_line(gamestate* game, int index){
 }
 
 void moveLine(gamestate* game, int index, enum direction dir){
-    int iter = COLUMN_SIZE - 1; // go into the loop column_size - 1 times
     switch (dir){
     case LEFT:
     {
@@ -136,7 +131,7 @@ void updateChicken(gamestate* game, enum direction dir){
     manage_collisions(game, new);
 
     // if we are out of bounds or we go to the corner.
-    if (pos % COLUMN_SIZE == 0 || (game->death == pos/COLUMN_SIZE)){
+    if (pos % COLUMN_SIZE == 0 || (game->death >= game->chicken / COLUMN_SIZE)){
         game->chicken = AU_COIN;
         return ;
     }

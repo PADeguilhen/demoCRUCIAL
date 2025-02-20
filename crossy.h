@@ -1,4 +1,8 @@
 #pragma once
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ncurses.h>
 
 /*
 The idea is that the first element of every line contains the info of what is on the line

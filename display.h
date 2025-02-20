@@ -1,4 +1,10 @@
 #pragma once
 #include "crossy.h"
+#include <stdlib.h>
+#include <ncurses.h>
 
-void printGame(gamestate* game);
+#define COLOR_BROWN 6
+
+void initColors(void);
+
+void printGame(gamestate* game, bool debug);

@@ -14,3 +14,6 @@ c-Rossy: $(OBJECTS)
 
 clean:
 	@rm $(OBJECTS) c-Rossy
+
+debug: c-Rossy
+	./c-Rossy debug
