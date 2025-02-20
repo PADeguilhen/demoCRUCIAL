@@ -6,7 +6,7 @@ int random_in_range(int a, int b){
 }
 
 void gen_line(gamestate* game, int index){
-    enum lineLabel type = random_in_range(0, LABEL_COUNT);
+    enum lineLabel type = random_in_range(LABEL_COUNT, 2* LABEL_COUNT);
     game->grid[index] = type; // the default type is the ground
 
     switch (type) {

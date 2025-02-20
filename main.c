@@ -2,21 +2,21 @@
 #include <ncurses.h>
 #include <time.h>
 
+
 #include "crossy.h"
 #include "display.h"
 
 int main(int argc, char* argv[]){
     bool debug = false;
-
     if (argc > 1 && strcmp(argv[1], "debug") == 0) debug = true;
 
     srand(time(NULL));
     initscr();
+    start_color();
     cbreak();
     //nodelay(stdscr, true);
     noecho();
     keypad(stdscr, TRUE);
-    start_color();
     use_default_colors();
 
     initColors();

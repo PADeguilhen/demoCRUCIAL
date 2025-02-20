@@ -1,9 +1,5 @@
 #pragma once
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <ncurses.h>
-
 /*
 The idea is that the first element of every line contains the info of what is on the line
 with special codes for:
@@ -40,6 +36,7 @@ typedef struct gamestate{
 Information that is in the col of evrey line of the grid of the game that gives the information on what is in the column
 */
 enum lineLabel {
+    LABEL_COUNT = 9,
     CAR_LANE_UP,
     CAR_LANE_DOWN,
     TRUCK_LANE_UP,
@@ -48,9 +45,8 @@ enum lineLabel {
     RIVER_DOWN,
     TRAIN_UP,
     TRAIN_DOWN,
-    SOLID_GROUND,
+    SOLID_GROUND
     // this enum will have the number of lables assigned to it (keep it at the bottom)
-    LABEL_COUNT
 };
 
 enum direction {

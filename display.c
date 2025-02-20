@@ -2,17 +2,40 @@
 #include "crossy.h"
 
 const int entity_ID[LABEL_COUNT] ={
-    11*CAR_LANE_UP,
-    11*CAR_LANE_DOWN,
-    11*TRUCK_LANE_UP,
-    11*TRUCK_LANE_DOWN,
-    11*RIVER_UP,
-    11*RIVER_DOWN,
-    11*TRAIN_UP,
-    11*TRAIN_DOWN,
-    11*SOLID_GROUND
+    CAR_LANE_UP + LABEL_COUNT,
+    CAR_LANE_DOWN + LABEL_COUNT,
+    TRUCK_LANE_UP + LABEL_COUNT,
+    TRUCK_LANE_DOWN + LABEL_COUNT,
+    RIVER_UP + LABEL_COUNT,
+    RIVER_DOWN + LABEL_COUNT,
+    TRAIN_UP + LABEL_COUNT,
+    TRAIN_DOWN + LABEL_COUNT,
+    SOLID_GROUND + LABEL_COUNT
 };
 
+const char* entity_chr[LABEL_COUNT] = {
+    " ",    // car up
+    " ",    // car down
+    " ",    // truck up
+    " ",    // truck down
+    "=",    // log
+    "=",    // logs
+    " ",    // train
+    " ",    // train
+    "%",   // tree
+};
+
+const char* surface_chr[LABEL_COUNT] = {
+    " ",    // road
+    " ",    // road
+    " ",    // road
+    " ",    // road
+    "~",    // water
+    "~",    // water
+    " ",    // train
+    " ",    // train
+    "\"",   // grass
+};
 
 void printHat(const chtype left, const chtype right){
     addch(left);
@@ -34,13 +57,13 @@ void printLine(gamestate* game, int line, enum lineLabel surface){
         
         if (game->grid[line*COLUMN_SIZE + col] == 1){
             //attron(A_BOLD);
-            attron(COLOR_PAIR(entity_ID[surface]));
-            printw("%%");
-            attroff(COLOR_PAIR(entity_ID[surface]));
+            attron(COLOR_PAIR(entity_ID[TO_ENTITY_INDEX(surface)]));
+            printw("%s", entity_chr[TO_ENTITY_INDEX(surface)]);
+            attroff(COLOR_PAIR(entity_ID[TO_ENTITY_INDEX(surface)]));
             //attroff(A_BOLD);
         }else{
             attron(COLOR_PAIR(surface));
-            printw("\"");
+            printw("%s", surface_chr[TO_ENTITY_INDEX(surface)]);
             attroff(COLOR_PAIR(surface));
         }
     }
@@ -48,12 +71,12 @@ void printLine(gamestate* game, int line, enum lineLabel surface){
 
 void initColors(void){
     init_pair(SOLID_GROUND, COLOR_GREEN, COLOR_BLACK);
-    init_pair(entity_ID[SOLID_GROUND], COLOR_GREEN, COLOR_BLACK);
+    init_pair(entity_ID[TO_ENTITY_INDEX(SOLID_GROUND)], COLOR_GREEN, COLOR_BLACK);
 
     init_pair(RIVER_DOWN, COLOR_BLUE, COLOR_BLACK);
     init_pair(RIVER_UP, COLOR_BLUE, COLOR_BLACK);
-    init_pair(entity_ID[RIVER_UP], COLOR_BROWN, COLOR_BLACK);
-    init_pair(entity_ID[RIVER_DOWN], COLOR_BROWN, COLOR_BLACK);
+    init_pair(entity_ID[TO_ENTITY_INDEX(RIVER_UP)], COLOR_BROWN, COLOR_BLACK);
+    init_pair(entity_ID[TO_ENTITY_INDEX(RIVER_DOWN)], COLOR_BROWN, COLOR_BLACK);
 }
 
 void printGame(gamestate* game, bool debug){
