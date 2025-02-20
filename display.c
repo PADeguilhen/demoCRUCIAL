@@ -22,7 +22,7 @@ const char* entity_chr[LABEL_COUNT] = {
     "=",    // logs
     " ",    // train
     " ",    // train
-    "%",   // tree
+    "%",    // tree
 };
 
 const char* surface_chr[LABEL_COUNT] = {
