@@ -13,15 +13,13 @@ with special codes for:
 #define GRID_SIZE   (LINE_SIZE * COLUMN_SIZE)
 
 #define FIRST_GEN           0               // the position of the first visible line
-#define D_CHK_DTH           3 // distance between the chicken and death
+#define D_CHK_DTH           3               // distance between the chicken and death
 #define STARTING_CHICKEN    (D_CHK_DTH * COLUMN_SIZE + (COLUMN_SIZE - 1) / 2)
 
 #define AU_COIN -1 // when the player has made a move that is illegal
 
-#define TREE_RATE 7 // 1 in TREE_RATE chance to get a tree
-
-
-#define MAX(a, b) ((a<b) ? (a) : (b))
+#define TREE_RATE 7     // 1 in TREE_RATE chance to get a tree
+#define MAX_LOG_SIZE 6  // max size of a log in a river
 
 /*
 We are going to generate the next gamestates iteratively by modifying the lines at: center / LINE_SIZE
@@ -47,6 +45,8 @@ enum lineLabel {
     TRAIN_UP,
     TRAIN_DOWN,
     SOLID_GROUND,
+    // this enum will have the number of lables assigned to it (keep it at the bottom)
+    LABEL_COUNT
 };
 
 enum direction {
@@ -61,3 +61,5 @@ void deleteGame(gamestate* game);
 
 //handeling moving in bounds.
 void updateChicken(gamestate* game, enum direction dir);
+
+void update_game_tic(gamestate* game);

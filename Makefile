@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -std=c99 -Wall -Wextra -pedantic
+CFLAGS = -std=c99 -Wall -Wextra -pedantic -fsanitize=address,undefined,leak
 LIBS = -lncurses
 
 OBJECTS = crossy.o display.o main.o

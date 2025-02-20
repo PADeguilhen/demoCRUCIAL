@@ -5,18 +5,38 @@
 
 #include "crossy.h"
 
-void gen_line(gamestate* game, enum lineLabel type, int index){
+int random_in_range(int a, int b){
+    return a + rand() % (b-a);
+}
+
+void gen_line(gamestate* game, int index){
+    enum lineLabel type = random_in_range(0, LABEL_COUNT);
+    game->grid[index] = type; // the default type is the ground
+
     switch (type) {
-    case SOLID_GROUND:
+    case RIVER_DOWN:
+    case RIVER_UP:{
+        int pos1 = random_in_range(1, COLUMN_SIZE);
+        int size1 = random_in_range(1, MAX_LOG_SIZE);
+
+        for(int i = 1; i<COLUMN_SIZE; i++) game->grid[index + i] = 0;
+
+        for(; size1 >= 0; size1--) {
+            if ((pos1 + size1) % COLUMN_SIZE == 0) pos1 = 1;
+            game->grid[index + ((pos1 + size1) % COLUMN_SIZE)] = 1;
+        }
+        break;
+    }
+    default:
+        game->grid[index] = SOLID_GROUND;
         game -> grid[index + 1] = 1; // trees...
         game -> grid[index + 2] = 1;
         game -> grid[index + COLUMN_SIZE - 1] = 1;
         game -> grid[index + COLUMN_SIZE - 2] = 1;
         
         int r;
-
         for(int i = 3; i<COLUMN_SIZE-2; i++){
-            r = rand() % TREE_RATE;
+            r = random_in_range(0, TREE_RATE);
             if (r == 0){
                 game -> grid[index + i] = 1;
             }else{
@@ -24,8 +44,46 @@ void gen_line(gamestate* game, enum lineLabel type, int index){
             }
         }
         break;
+    }
+}
+
+void moveLine(gamestate* game, int index, enum direction dir){
+    int iter = COLUMN_SIZE - 1; // go into the loop column_size - 1 times
+    switch (dir){
+    case LEFT:
+    {
+        int start = game->grid[index + 1];
+        for(int i=1; i<COLUMN_SIZE-1; i++){
+            game->grid[index + i] = game->grid[index + i + 1];
+        }
+        game->grid[index + COLUMN_SIZE-1] = start;
+    }
+    case RIGHT:
+    {
+        int end = game->grid[index + COLUMN_SIZE - 1];
+        for(int i=COLUMN_SIZE-1; i>1; i--){
+            game->grid[index + i] = game->grid[index + i - 1];
+        }
+        game->grid[index + 1] = end;
+        break;
+    }
     default:
         break;
+    }
+}
+
+void update_game_tic(gamestate* game){
+    for(int line=0; line<LINE_SIZE; line++){
+        switch (game->grid[line*COLUMN_SIZE]){
+        case RIVER_DOWN:
+            moveLine(game, line*COLUMN_SIZE, DOWN);
+            break;
+        case RIVER_UP:
+            moveLine(game, line*COLUMN_SIZE, UP);
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -35,8 +93,7 @@ gamestate* initGame(void){
     memset(res->grid, 0, GRID_SIZE*sizeof(int)); // initialise the grid to 0
     
     for(int i=0; i<LINE_SIZE; i++){
-        res->grid[i*COLUMN_SIZE] = SOLID_GROUND;
-        gen_line(res, SOLID_GROUND, i*COLUMN_SIZE);
+        gen_line(res, i*COLUMN_SIZE);
     }
     res->death = FIRST_GEN;
     res->chicken = STARTING_CHICKEN;
@@ -44,7 +101,6 @@ gamestate* initGame(void){
 }
 
 void deleteGame(gamestate* game){
-    free(game->grid);
     free(game);
 }
 
@@ -58,6 +114,7 @@ void manage_collisions(gamestate* game, int newPos){
 }
 
 void updateChicken(gamestate* game, enum direction dir){
+    update_game_tic(game);
     if(game->chicken == AU_COIN) return ;
     int pos = game->chicken % GRID_SIZE;
     int new;
@@ -86,6 +143,6 @@ void updateChicken(gamestate* game, enum direction dir){
 
     if(dir == UP && (game->chicken/COLUMN_SIZE - game->death > D_CHK_DTH) && pos < new){
         game->death++;
-        gen_line(game, SOLID_GROUND, (game->death*COLUMN_SIZE) % GRID_SIZE);
+        gen_line(game, (game->death*COLUMN_SIZE) % GRID_SIZE);
     }
 }

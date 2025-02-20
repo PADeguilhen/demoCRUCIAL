@@ -34,6 +34,7 @@ void printLine(gamestate* game, int line, enum lineLabel surface){
 
 void printGame(gamestate* game){
     erase();
+    printw("  ");
     printHat(ACS_ULCORNER, ACS_URCORNER);
 
     int iter = LINE_SIZE-1; // print all the lines
@@ -41,11 +42,13 @@ void printGame(gamestate* game){
         if(line < 0){
             line = LINE_SIZE-1;
         }
+        printw("%d ", game->grid[line*COLUMN_SIZE]);
         addch(ACS_VLINE);
         printLine(game, line, game->grid[line*COLUMN_SIZE]);
         addch(ACS_VLINE);
         printw("\n");
     }
+    printw("  ");
     printHat(ACS_LLCORNER, ACS_LRCORNER);
     if(game->chicken!=AU_COIN) printw("score: %d\nPress 'q' to quit.", game->death);
 }
