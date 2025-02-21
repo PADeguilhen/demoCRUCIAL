@@ -10,8 +10,8 @@ void gen_line(gamestate* game, int index){
     game->grid[index] = type; // the default type is the ground
 
     switch (type) {
-    case RIVER_DOWN:
-    case RIVER_UP:{
+    case RIVER_RIGHT:
+    case RIVER_LEFT:{
         int pos1 = random_in_range(1, COLUMN_SIZE);
         int size1 = random_in_range(1, MAX_LOG_SIZE);
 
@@ -51,11 +51,12 @@ void moveLine(gamestate* game, int index, enum direction dir){
         for(int i=1; i<COLUMN_SIZE-1; i++){
             game->grid[index + i] = game->grid[index + i + 1];
         }
-        game->grid[index + COLUMN_SIZE-1] = start;
+        game->grid[index + COLUMN_SIZE - 1] = start;
+        break;
     }
     case RIGHT:
     {
-        int end = game->grid[index + COLUMN_SIZE - 1];
+        int end = game->grid[index + COLUMN_SIZE-1];
         for(int i=COLUMN_SIZE-1; i>1; i--){
             game->grid[index + i] = game->grid[index + i - 1];
         }
@@ -67,19 +68,36 @@ void moveLine(gamestate* game, int index, enum direction dir){
     }
 }
 
+//assuming the chicken is in a playable river square
 void update_game_tic(gamestate* game){
     for(int line=0; line<LINE_SIZE; line++){
         switch (game->grid[line*COLUMN_SIZE]){
-        case RIVER_DOWN:
-            moveLine(game, line*COLUMN_SIZE, DOWN);
+        case CAR_LANE_RIGHT:
+        case TRUCK_LANE_RIGHT:
+        case RIVER_RIGHT:
+            moveLine(game, line*COLUMN_SIZE, RIGHT);
             break;
-        case RIVER_UP:
-            moveLine(game, line*COLUMN_SIZE, UP);
+        case CAR_LANE_LEFT:
+        case TRUCK_LANE_LEFT:
+        case RIVER_LEFT:
+            moveLine(game, line*COLUMN_SIZE, LEFT);
             break;
         default:
             break;
         }
     }
+
+    switch (game->grid[((game->chicken/COLUMN_SIZE) % LINE_SIZE) * COLUMN_SIZE]){
+        case RIVER_LEFT:
+            game->chicken -= 1;
+            break;
+        case RIVER_RIGHT:
+            game->chicken += 1;
+            break;
+        default:
+            break;
+    }
+    if(game->chicken % COLUMN_SIZE == 0) game->chicken = AU_COIN;
 }
 
 gamestate* initGame(void){
@@ -99,13 +117,21 @@ void deleteGame(gamestate* game){
     free(game);
 }
 
-//only trees are implemented...
 void manage_collisions(gamestate* game, int newPos){
-    int pos = newPos % GRID_SIZE;
-    if (game->grid[(pos/COLUMN_SIZE)*COLUMN_SIZE] == SOLID_GROUND && game->grid[pos] == 1){
-        return ;
+    switch (game->grid[((newPos%GRID_SIZE)/COLUMN_SIZE) * COLUMN_SIZE]){
+    case SOLID_GROUND:
+        if (game->grid[newPos % GRID_SIZE] == 0) game->chicken = newPos;
+        break;
+    case RIVER_LEFT:
+    case RIVER_RIGHT:
+        if(game->grid[newPos % GRID_SIZE] == 0) game->chicken = AU_COIN;
+        else game->chicken = newPos;
+        break;
+    default:
+        if(game->grid[newPos % GRID_SIZE] == 1) game->chicken = AU_COIN;
+        else game->chicken = newPos;
+        break;
     }
-    game->chicken = newPos;
 }
 
 void updateChicken(gamestate* game, enum direction dir){
@@ -129,6 +155,8 @@ void updateChicken(gamestate* game, enum direction dir){
     }
 
     manage_collisions(game, new);
+
+    if (game->chicken == AU_COIN) return ;
 
     // if we are out of bounds or we go to the corner.
     if (pos % COLUMN_SIZE == 0 || (game->death >= game->chicken / COLUMN_SIZE)){

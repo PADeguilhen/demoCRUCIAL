@@ -2,14 +2,14 @@
 #include "crossy.h"
 
 const int entity_ID[LABEL_COUNT] ={
-    CAR_LANE_UP + LABEL_COUNT,
-    CAR_LANE_DOWN + LABEL_COUNT,
-    TRUCK_LANE_UP + LABEL_COUNT,
-    TRUCK_LANE_DOWN + LABEL_COUNT,
-    RIVER_UP + LABEL_COUNT,
-    RIVER_DOWN + LABEL_COUNT,
-    TRAIN_UP + LABEL_COUNT,
-    TRAIN_DOWN + LABEL_COUNT,
+    CAR_LANE_LEFT + LABEL_COUNT,
+    CAR_LANE_RIGHT + LABEL_COUNT,
+    TRUCK_LANE_LEFT + LABEL_COUNT,
+    TRUCK_LANE_RIGHT + LABEL_COUNT,
+    RIVER_LEFT + LABEL_COUNT,
+    RIVER_RIGHT + LABEL_COUNT,
+    TRAIN_LEFT + LABEL_COUNT,
+    TRAIN_RIGHT + LABEL_COUNT,
     SOLID_GROUND + LABEL_COUNT
 };
 
@@ -19,9 +19,9 @@ const char* entity_chr[LABEL_COUNT] = {
     " ",    // truck up
     " ",    // truck down
     "=",    // log
-    "=",    // logs
-    " ",    // train
-    " ",    // train
+    "=",    // log
+    " ",    // train up
+    " ",    // train down
     "%",    // tree
 };
 
@@ -32,8 +32,8 @@ const char* surface_chr[LABEL_COUNT] = {
     " ",    // road
     "~",    // water
     "~",    // water
-    " ",    // train
-    " ",    // train
+    "·",    // tracks
+    "·",    // tracks
     "\"",   // grass
 };
 
@@ -73,16 +73,16 @@ void initColors(void){
     init_pair(SOLID_GROUND, COLOR_GREEN, COLOR_BLACK);
     init_pair(entity_ID[TO_ENTITY_INDEX(SOLID_GROUND)], COLOR_GREEN, COLOR_BLACK);
 
-    init_pair(RIVER_DOWN, COLOR_BLUE, COLOR_BLACK);
-    init_pair(RIVER_UP, COLOR_BLUE, COLOR_BLACK);
-    init_pair(entity_ID[TO_ENTITY_INDEX(RIVER_UP)], COLOR_BROWN, COLOR_BLACK);
-    init_pair(entity_ID[TO_ENTITY_INDEX(RIVER_DOWN)], COLOR_BROWN, COLOR_BLACK);
+    init_pair(RIVER_RIGHT, COLOR_BLUE, COLOR_BLACK);
+    init_pair(RIVER_LEFT, COLOR_BLUE, COLOR_BLACK);
+    init_pair(entity_ID[TO_ENTITY_INDEX(RIVER_LEFT)], COLOR_BROWN, COLOR_BLACK);
+    init_pair(entity_ID[TO_ENTITY_INDEX(RIVER_RIGHT)], COLOR_BROWN, COLOR_BLACK);
 }
 
 void printGame(gamestate* game, bool debug){
     erase();
     if (debug) printw("cln:%d, ln:%d; dth:%d\n", game->chicken % COLUMN_SIZE, game->chicken / COLUMN_SIZE, game->death);
-    if (debug) printw("  ");
+    if (debug) printw("typ");
     printHat(ACS_ULCORNER, ACS_URCORNER);
 
     int iter = LINE_SIZE-1; // print all the lines
@@ -96,7 +96,7 @@ void printGame(gamestate* game, bool debug){
         addch(ACS_VLINE);
         printw("\n");
     }
-    if (debug) printw("  ");
+    if (debug) printw("   ");
     printHat(ACS_LLCORNER, ACS_LRCORNER);
     if(game->chicken!=AU_COIN) printw("score: %d\nPress 'q' to quit.", game->death);
 }

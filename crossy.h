@@ -18,7 +18,7 @@ with special codes for:
 
 #define AU_COIN -1 // when the player has made a move that is illegal
 
-#define TREE_RATE 7     // 1 in TREE_RATE chance to get a tree
+#define TREE_RATE    7     // 1 in TREE_RATE chance to get a tree
 #define MAX_LOG_SIZE 6  // max size of a log in a river
 
 /*
@@ -36,17 +36,17 @@ typedef struct gamestate{
 Information that is in the col of evrey line of the grid of the game that gives the information on what is in the column
 */
 enum lineLabel {
+    // this enum will have the number of lables assigned to it
     LABEL_COUNT = 9,
-    CAR_LANE_UP,
-    CAR_LANE_DOWN,
-    TRUCK_LANE_UP,
-    TRUCK_LANE_DOWN,
-    RIVER_UP,
-    RIVER_DOWN,
-    TRAIN_UP,
-    TRAIN_DOWN,
+    CAR_LANE_LEFT,
+    CAR_LANE_RIGHT,
+    TRUCK_LANE_LEFT,
+    TRUCK_LANE_RIGHT,
+    RIVER_LEFT,
+    RIVER_RIGHT,
+    TRAIN_LEFT,
+    TRAIN_RIGHT,
     SOLID_GROUND
-    // this enum will have the number of lables assigned to it (keep it at the bottom)
 };
 
 enum direction {

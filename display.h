@@ -4,7 +4,7 @@
 #include <ncurses.h>
 
 #define TO_ENTITY_INDEX(label) (label - LABEL_COUNT - 1)
-#define COLOR_BROWN 3 //3
+#define COLOR_BROWN 3
 
 void initColors(void);
 
