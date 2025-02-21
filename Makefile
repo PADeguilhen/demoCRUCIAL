@@ -18,6 +18,3 @@ clean:
 
 debug: c-Rossy
 	./c-Rossy debug
-
-test: $(T)
-	@$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $(T) $(LIBS)
